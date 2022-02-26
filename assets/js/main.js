@@ -29,12 +29,19 @@ const grafico = function (data) {
                 { y: data.powerstats.power, label: "Poder" },
                 { y: data.powerstats.speed, label: "Velocidad" },
                 { y: data.powerstats.strength, label: "Fuerza" },
-            
+
             ]
         }]
     });
-    chart.render();
+    if(data.powerstats.intelligence !=='null'){
+        chart.render();
+    }else{
+        alert("No hay datos de grafica")
+    }
+    
+ 
 }
+
 const insertarHtml = (data) => {
     console.log(data)
     const name = data.name;
@@ -46,38 +53,38 @@ const insertarHtml = (data) => {
     const weight = data.appearance.weight[1]
     const aliases = data.biography.aliases
     const imagen = data.image.url;
-    
-    
+
+
     heroname.innerHTML = name;
 
     heroTabla.innerHTML = `
       <tr>
-          <td>conexiones</td>
+          <td><strong>CONEXIONES</strong></td>
           <td>${groupAffiliation}</td>
       </tr>
       <tr>
-            <td>publicado por</td>
+            <td><strong>PUBLICADO POR</strong></td>
             <td>${publisher}</td>
       </tr>
       <tr>
-            <td>Ocupación</td>
+            <td><strong>OCUPACIÓN</strong></td>
             <td>${occupation}</td>
       </tr>
       <tr>
-            <td>Primera Aparición</td>
+            <td><strong>PRIMERA APARICIÓN</strong></td>
             <td>${firstAppearance}</td>
       </tr>
       
       <tr>
-          <td>Altura</td>
+          <td><strong>ALTURA</strong></td>
           <td>${height}</td>
       </tr>
       <tr>
-            <td>Peso</td>
+            <td><strong>PESO</strong></td>
             <td>${weight}</td>
        </tr>
        <tr>
-            <td>Alianzas</td>
+            <td><strong>ALIANZAS</strong></td>
             <td>${aliases}</td>
   </tr>
       
@@ -85,25 +92,29 @@ const insertarHtml = (data) => {
   `
 
     heroImagen.innerHTML = `
-      <img src="${imagen}" alt="${name}">
+      <img  class="img-fluid rounded-start" src="${imagen}" alt="${name}">
   `
 }
-
 
 
 heroFormulario.addEventListener("submit", (event) => {
     event.preventDefault();
     const hero = heroBuscar.value;
-    if(parseInt(hero) > 732){
+    const patron = /^\d*[1-9]\d*$/
+    /*if (parseInt(hero) > 732) {
         alert("Número fuera de Rango. Debe ingresar un número menor a 733")
+    }*/
+    if ((!hero.match(patron) ) || (parseInt(hero) > 732)){
+        alert("Fuera de Rango. Debe ingresar un número menor a 733")
+        return 
     }
-    else{
-    fetch(`https://www.superheroapi.com/api.php/4905856019427443/${hero}`).then((response) => {
-        response.json().then((data) => {
-            insertarHtml(data)
-            grafico(data)
-        });
-    })
+    else {
+        fetch(`https://www.superheroapi.com/api.php/4905856019427443/${hero}`).then((response) => {
+            response.json().then((data) => {
+                insertarHtml(data)
+                grafico(data)
+            });
+        })
     }
 })
 
